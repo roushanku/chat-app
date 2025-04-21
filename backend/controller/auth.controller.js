@@ -3,26 +3,26 @@ import {LoginUserService , UserLogoutService} from '../service/auth.service.js';
 
 async function RegisterUserController(req , res) {
     try{
-        console.log("debug RegisterUserController");
+        // console.log("debug RegisterUserController");
         const { name, email, password, phoneNumber, profile_picture } = req.body;
 
         if(!name || !email || !password) {
             return res.status(400).json({message: 'Please fill all the fields'});
         }
         
-        console.log(name, email, password, phoneNumber, profile_picture);
+        // console.log(name, email, password, phoneNumber, profile_picture);
         const result = await RegisterUserService(name, email, password, phoneNumber, profile_picture);
 
         if (result?.error) {
             return res.status(400).json({ message: result.error });
         }
 
-        console.log(result);
+        // console.log(result);
         res.status(200).json({ data: result, message: 'User Registered successfully' });
     }
     catch(error) {
         res.status(500).json({message: 'Internal Server Error in Register User controller'});
-        console.lof("error in Register User Controller", error);
+        console.log("error in Register User Controller", error);
     }
 }
 

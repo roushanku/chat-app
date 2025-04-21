@@ -1,26 +1,25 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageArea from "./MessageArea";
 import MessageInput from "./MessageInput";
 
 import { useUser } from "../../UserContext";
 import { getMessage } from "../../API/chat.api";
+import { useSocketContext } from "../../context/socketContext.jsx";
 
 export default function ChatContainer() {
-  const { activeUser, setActiveUser } = useUser();
-  // console.log("activeUser" , activeUser);
+  const { socket } = useSocketContext();
+  const { activeUser } = useUser();
   const chat_id = activeUser?.chat_id;
 
   const storedUser = JSON.parse(sessionStorage.getItem("user"));
   const userId = storedUser?.data?.user?._id;
 
-  // console.log("userId", userId);
-
   const [messages, setMessages] = useState([]);
 
+  // Fetch initial messages
   useEffect(() => {
-    if (!chat_id) return; // Exit early if chat_id is falsy
+    if (!chat_id) return;
 
     const fetchMessages = async () => {
       try {
@@ -28,7 +27,6 @@ export default function ChatContainer() {
         if (response.data) {
           setMessages(response.data);
         }
-        console.log("messages", response.data);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -37,9 +35,46 @@ export default function ChatContainer() {
     fetchMessages();
   }, [chat_id]);
 
+  // Socket listener for new messages
+  useEffect(() => {
+    if (!socket || !chat_id) return;
+
+    // Join the specific chat room
+    socket.emit('joinChat', chat_id);
+    
+    console.log("Joined chat room:", chat_id);
+
+    // Listen for new messages
+    const handleNewMessage = (newMessage) => {
+      console.log("New message received via socket:", newMessage);
+      
+      setMessages(prevMessages => {
+        // Check if message already exists to prevent duplicates
+        const isDuplicate = prevMessages.some(msg => 
+          msg._id === newMessage._id || 
+          (msg.content === newMessage.content && 
+           msg.sender_id === newMessage.sender_id && 
+           Math.abs(new Date(msg.createdAt) - new Date(newMessage.createdAt)) < 1000)
+        );
+        
+        return isDuplicate ? prevMessages : [...prevMessages, newMessage];
+      });
+    };
+
+    socket.on('getnewMessage', handleNewMessage);
+
+    // Cleanup
+    return () => {
+      console.log("Leaving chat room:", chat_id);
+      socket.off('getnewMessage', handleNewMessage);
+      socket.emit('leaveChat', chat_id);
+    };
+  }, [socket, chat_id]);
+
+  // Transform messages for display
   const transformMessages = (messages, userId) => {
-    return messages.map((msg, index) => ({
-      id: index + 1,
+    return messages.map((msg) => ({
+      id: msg._id,
       content: msg.content,
       time: new Date(msg.createdAt).toLocaleTimeString([], {
         hour: "2-digit",
@@ -49,25 +84,7 @@ export default function ChatContainer() {
     }));
   };
 
-  console.log("messages", messages);
-
   const formattedMessages = transformMessages(messages, userId);
-  console.log(formattedMessages);
-
-  const handleSendMessage = (content) => {
-    const newMessage = {
-      id: messages.length + 1,
-      content,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
-      isSentByMe: true,
-    };
-
-    setMessages([...messages, newMessage]);
-  };
 
   return (
     <div className="w-full h-full flex flex-col">

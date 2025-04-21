@@ -3,7 +3,7 @@ async function chatService(userId) {
     try{
 
         const response = await chatModel.find({participants : userId}).exec();
-        console.log("response from chat service" , response);
+        // console.log("response from chat service" , response);
         return response;
     }
     catch(error) {
