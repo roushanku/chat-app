@@ -1,46 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
-
 import { useUser } from "../../UserContext";
 import { sendMessage } from "../../API/chat.api";
-import MessageArea from "./MessageArea.jsx";
 import { toast } from "react-toastify";
+import { useSocketContext } from "../../context/socketContext.jsx";
+// Import the notification sound
+import notificationSound from "../../assets/notification.mp4";
 
 export default function MessageInput({ chatId }) {
-  const {activeUser} = useUser();
+  const { activeUser } = useUser();
   const [message, setMessage] = useState("");
+  const { socket } = useSocketContext();
+  const audioRef = useRef(null);
 
   const storedUser = JSON.parse(sessionStorage.getItem("user"));
   const userId = storedUser?.data?.user?._id;
 
+  // Create audio element when component mounts
+  useEffect(() => {
+    audioRef.current = new Audio(notificationSound);
+    audioRef.current.preload = "auto";
+  }, []);
 
-  //if message is sent from chat then it means chat is aleady created -- so send msg directly 
+  // Function to play notification sound
+  const playNotificationSound = () => {
+    if (audioRef.current) {
+      // Reset the audio to the beginning if it was already played
+      audioRef.current.currentTime = 0;
+      // Play the notification sound
+      audioRef.current.play().catch(error => {
+        console.error("Error playing notification sound:", error);
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      const sentMessageResponse = await sendMessage(chatId, userId, message, "text"); // now only text message is allowed
-      // console.log("sentMessageResponse", sentMessageResponse.data);
-      if(sentMessageResponse.status === 201) {
-        console.log("Message sent successfully");
-        const formattedMessage = [{
-          id: sentMessageResponse.data._id,
+    if (!message.trim()) return;
+
+    try {
+      // First, add a local version of the message to provide instant feedback
+      const localMessage = {
+        _id: `local-${Date.now()}`,
+        content: message,
+        sender_id: userId,
+        chat_id: chatId,
+        type: "text",
+        createdAt: new Date().toISOString()
+      };
+      
+      // Reset message input immediately for better UX
+      setMessage("");
+      
+      // Send message to server
+      const sentMessageResponse = await sendMessage(chatId, userId, message, "text");
+      
+      if (sentMessageResponse.status === 201) {
+        const newMessage = {
+          _id: sentMessageResponse.data._id,
           content: message,
-          time: new Date().toLocaleTimeString([], { 
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-          }),
-          isSentByMe: true
-        }];
-        console.log("formattedMessage", formattedMessage);
-        // console.log("formattedMessage is done...");
-        <MessageArea messages={formattedMessage} />
-        // console.log("MessageArea is done...");
-        setMessage("");
-      }
-      else {
+          sender_id: userId,
+          chat_id: chatId,
+          type: "text",
+          createdAt: new Date().toISOString()
+        };
+
+        // Emit message via socket
+        if (socket) {
+          console.log("Emitting message via socket:", newMessage);
+          socket.emit('sendMessage', {
+            chatId,
+            message: newMessage
+          });
+        }
+        
+        // Play notification sound when message is successfully sent
+        playNotificationSound();
+      } else {
         toast.error("Message not sent");
       }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
     }
   };
 

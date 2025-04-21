@@ -67,9 +67,9 @@ async function UserLogoutService(req , res) {
 async function GetUserDetailsService(userId) {
     try{
         // console.log("debug GetUserDetailsService");
-        console.log(userId);
+        // console.log(userId);
         const user = await User.findById(userId).exec();
-        console.log(user);
+        // console.log(user);
         if (!user) {
             return { error: 'User not found' };
         }

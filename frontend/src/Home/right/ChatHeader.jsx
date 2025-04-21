@@ -1,6 +1,9 @@
 import React from "react";
+import { useSocketContext } from "../../context/socketContext";
 
 export default function ChatHeader({ activeUser }) {
+  const {onlineUsers} = useSocketContext();
+  const isUserOnline = onlineUsers.includes(activeUser?.id);
   // If no active user is selected, provide default values
   const user = activeUser || { 
     name: "Select a conversation", 
@@ -19,7 +22,7 @@ export default function ChatHeader({ activeUser }) {
         <div className="ml-3">
           <h2 className="text-base font-medium">{user.name}</h2>
           <p className="text-xs text-gray-500">
-            {user.isOnline ? "Online" : "Offline"}
+            {isUserOnline ? "Online" : "Offline"}
           </p>
         </div>
       </div>

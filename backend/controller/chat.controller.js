@@ -2,7 +2,7 @@ import { chatService , CreateNewChatService} from "../service/chat.service.js";
 async function chatController(req , res) {
     try{
         const {userId} = req.query;
-        console.log("inside chat controller");
+        // console.log("inside chat controller");
 
         if(!userId) {
             return res.status(400).json({message : "userId is required"});

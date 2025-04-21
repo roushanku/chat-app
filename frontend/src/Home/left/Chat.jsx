@@ -2,9 +2,15 @@ import React from "react";
 import { useState } from "react";
 import ChatContainer from "../right/ChatContainer.jsx";
 import {useUser} from '../../UserContext.jsx'
+import { useSocketContext } from "../../context/socketContext.jsx";
 
 export default function User({ user }) {
   const {activeUser, setActiveUser} = useUser();
+  const {socket , onlineUsers} = useSocketContext();
+
+  const isUserOnline = onlineUsers.includes(user.id);
+
+  console.log("userOnline" , isUserOnline);
 
   // Function to handle user selection
   const handleUserClick = (user) => {
@@ -13,7 +19,7 @@ export default function User({ user }) {
   };
 
   return (
-    <div onClick = {() => handleUserClick(user)} className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${user.isOnline ? 'bg-blue-50' : ''}`}>
+    <div onClick = {() => handleUserClick(user)} className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 ${isUserOnline ? 'bg-blue-50' : ''}`}>
       {/* User Avatar with Online Indicator */}
       <div className="relative flex-shrink-0">
         <img 
@@ -21,7 +27,7 @@ export default function User({ user }) {
           alt={`${user.name}`}
           className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border border-gray-200"
         />
-        {user.isOnline && (
+        {isUserOnline && (
           <span className="absolute bottom-0 right-0 block h-2 w-2 md:h-3 md:w-3 rounded-full bg-green-500 border-2 border-white"></span>
         )}
       </div>
