@@ -1,11 +1,12 @@
 import express from 'express';
-import { AcceptfriendRequestController, GetfriendRequestController, RejectfriendRequestController, SendfriendRequestController } from '../../controller/friendRequest.controller.js';
+import { AcceptfriendRequestController, FriendReuestSuggestionController, GetfriendRequestController, RejectfriendRequestController, SendfriendRequestController } from '../../controller/friendRequest.controller.js';
 
 const FriendRequestRouter = express.Router();
 
-FriendRequestRouter.post('/sendFriendRequest', SendfriendRequestController);
-FriendRequestRouter.post('/acceptFriendRequest', AcceptfriendRequestController);
-FriendRequestRouter.post('/rejectFriendRequest', RejectfriendRequestController);
+FriendRequestRouter.post('/send', SendfriendRequestController);
+FriendRequestRouter.post('/accept', AcceptfriendRequestController);
+FriendRequestRouter.post('/reject', RejectfriendRequestController);
 FriendRequestRouter.get('/getFriendRequest', GetfriendRequestController);
+FriendRequestRouter.get('/suggestion', FriendReuestSuggestionController);
 
 export default FriendRequestRouter;

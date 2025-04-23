@@ -36,7 +36,19 @@ const userSchema = new mongoose.Schema({
     isOnline: {
         type: Boolean,
         default: false
-    }
+    },
+    friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    friendRequests: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'FriendRequest'
+    }],
+    notifications: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Notification'
+    }]
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

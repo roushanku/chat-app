@@ -1,5 +1,27 @@
-import { AcceptfriendRequestService, GetfriendRequestService, RejectfriendRequestService, SendfriendRequestService } from "../service/friendRequest.service.js";
+import { AcceptfriendRequestService, GetfriendRequestService, RejectfriendRequestService, SendfriendRequestService , FriendRequestSuggestionService} from "../service/friendRequest.service.js";
 
+
+async function FriendReuestSuggestionController(req , res) {
+    try{
+        const { userId } = req.query;
+        if(!userId) {
+            return res.status(400).json({message: "Please provide userId"});
+        }
+
+        console.log("inside friend request suggestion controller" , userId);
+        const response = await FriendRequestSuggestionService(userId);
+        if(response.status === 200) {
+            return res.status(200).json({message: response.message, data: response.data});
+        }
+        else {
+            return res.status(500).json({message: response.message});
+        }
+    }
+    catch(error) {
+        console.log(error);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+}
 async function SendfriendRequestController(req , res) {
     try{
         const { senderId, receiverId } = req.body;
@@ -85,5 +107,6 @@ export {
     SendfriendRequestController,
     AcceptfriendRequestController,
     RejectfriendRequestController,
-    GetfriendRequestController
+    GetfriendRequestController,
+    FriendReuestSuggestionController
 }
