@@ -4,6 +4,25 @@ import {toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const backendUrl = "http://localhost:5000";
+
+async function register(username, email, phoneNumber, password) {
+    try {
+        const response = await axios.post(`${backendUrl}/api/v1/auth/register`, 
+            { username, email, phoneNumber, password }, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                withCredentials: true,
+            }
+        );
+
+        return response;
+    } catch (error) {
+        console.error("Registration failed:", error);
+        toast.error(error.response?.data?.message || "Registration failed. Please try again.");
+    }
+}
 async function login(email, password) {
     try {
         
@@ -67,4 +86,4 @@ async function getuserDetails(userId) {
     }
 }
 
-export { login , logout , getuserDetails};
+export { login , logout , getuserDetails , register};

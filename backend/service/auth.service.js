@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../Models/user.model.js'
+import { handleFileUploadController } from '../controller/file_handler.controller.js';
 async function RegisterUserService(name , email , password , phoneNumber , profile_picture) {
     try{
         const userExists = await User.findOne({ email }).exec();
@@ -10,12 +11,15 @@ async function RegisterUserService(name , email , password , phoneNumber , profi
         }
 
         const encryptedPassword = await bcrypt.hash(password , 12);
+
+        const profile_picture_url = await handleFileUploadController(profile_picture).data.url; //handle uploading to cloudnary
+
         const user = new User ({
             name : name,
             email : email,
             password: encryptedPassword,
             phoneNumber : phoneNumber,
-            profile_picture : profile_picture
+            profile_picture : profile_picture_url,
         });
 
         const result = await user.save();

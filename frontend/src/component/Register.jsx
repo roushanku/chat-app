@@ -36,8 +36,8 @@ export default function Register() {
       newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
     
     if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6) 
-      newErrors.password = "Password must be at least 6 characters";
+    // else if (formData.password.length < 6) 
+    //   newErrors.password = "Password must be at least 6 characters";
     
     if (formData.password !== formData.confirmPassword) 
       newErrors.confirmPassword = "Passwords do not match";
