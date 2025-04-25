@@ -4,6 +4,7 @@ import ChatRouter from './chat/chat.route.js';
 import MessageRouter from './Message/message.route.js';
 import FriendRequestRouter from './friendRequest/friendRequest.route.js';
 import FileHandlerRouter from './file-upload/file_handler.route.js';
+import llmRouter from './llm/llm.route.js';
 
 const rootRouter = express.Router();
 
@@ -27,6 +28,10 @@ const defaultRoute = [
     {
         path : '/file-upload',
         router : FileHandlerRouter
+    },
+    {
+        path : '/llm',
+        router : llmRouter
     }
 ]
 
