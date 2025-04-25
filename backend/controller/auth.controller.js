@@ -1,6 +1,6 @@
 import {GetUserDetailsService, RegisterUserService} from "../service/auth.service.js";
 import {LoginUserService , UserLogoutService} from '../service/auth.service.js';
-
+import { updateProfilePictureService } from "../service/auth.service.js";
 async function RegisterUserController(req , res) {
     try{
         // console.log("debug RegisterUserController");
@@ -74,4 +74,26 @@ async function getUserDetailsController(req , res) {
         res.status(500).json({message: 'Internal Server Error in Get User Details controller'});
     }
 }
-export {RegisterUserController , LoginUserController , UserLogoutController , getUserDetailsController};
+
+async function profilePictureController(req , res) {
+    try{
+        const {userId , file} = req.body;
+        if(!file) {
+            return res.status(400).json({message: "Please provide a file"});
+        }
+
+        const response = await updateProfilePictureService(req , res);
+        if(response.status === 200) {
+            return res.status(200).json({message: response.message, data: response.data});
+        }
+        else {
+            return res.status(500).json({message: response.message});
+        }
+    }
+    catch(error) {
+        console.log(error);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+export {RegisterUserController , LoginUserController , UserLogoutController , getUserDetailsController , profilePictureController};

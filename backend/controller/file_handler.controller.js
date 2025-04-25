@@ -2,6 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { uploadImageToCloudnary } from '../service/cloudnary.service.js';
+import User from '../Models/user.model.js';
 
 // Ensure upload directory exists
 const uploadDir = 'uploads';
@@ -46,6 +47,8 @@ const upload = multer({
 async function handleFileUploadController(req, res) {
     console.log("inside handleFileUploadController");
     // Process the upload with multer
+    // const {userId} = req.body;
+    console.log("req.body" , req.body);
     upload(req, res, async (err) => {
         if (err) {
             // Handle multer errors
@@ -90,6 +93,25 @@ async function handleFileUploadController(req, res) {
                     // Continue execution even if delete fails
                 }
             });
+
+            const profile_picture_url = "";
+
+            // console.log("userId" , userId);
+
+            // const user = await User.findByIdAndUpdate(userId, { profile_picture: profile_picture_url }, { new: true }).exec();
+
+            // if (!user) {
+            //     return { error: 'User not found' };
+            // }
+
+            // return res.status(200).json({
+            //     success: true,
+            //     message: 'Profile picture updated successfully',
+            //     data: {
+            //         // url: cloudinaryResult.url
+                    
+            //     }
+            // });
             
             // Return success response with Cloudinary URL
             return res.status(200).json({

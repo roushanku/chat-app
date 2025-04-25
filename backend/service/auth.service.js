@@ -85,4 +85,21 @@ async function GetUserDetailsService(userId) {
     }
 }
 
-export { RegisterUserService, LoginUserService , UserLogoutService , GetUserDetailsService};
+async function updateProfilePictureService(userId, profile_picture) {
+    try {
+        const profile_picture_url = await handleFileUploadController(req , res).data.url; //handle uploading to cloudnary
+
+        const user = await User.findByIdAndUpdate(userId, { profile_picture: profile_picture_url }, { new: true }).exec();
+
+        if (!user) {
+            return { error: 'User not found' };
+        }
+
+        return { message: 'Profile picture updated successfully', data: user };
+    } catch (error) {
+        console.log('Error in Update Profile Picture Service:', error);
+        return { error: 'Internal Server Error in Update Profile Picture Service' };
+    }
+}
+
+export { RegisterUserService, LoginUserService , UserLogoutService , GetUserDetailsService , updateProfilePictureService };

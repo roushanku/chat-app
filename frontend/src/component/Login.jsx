@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { login } from "../API/auth.api";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUser } from "../UserContext.jsx";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const {setActiveUser} = useUser();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,8 +44,9 @@ export default function Login() {
     if (response.status === 200) {
       sessionStorage.setItem("user", JSON.stringify(response.data));
       toast.success("Login successful! Redirecting to chat...");
+      setActiveUser(response.data);
       setTimeout(() => {
-        navigate("/chat");
+        navigate("/home");
       }, 2000);
     } else {
       toast.error("Login failed. Please try again.");

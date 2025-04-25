@@ -9,6 +9,8 @@ import { UserProvider } from "./UserContext.jsx";
 import { SocketProvider } from "./context/socketContext.jsx";
 import FriendSuggestions from "./component/Friendsuggestions.jsx";
 import PostList from "./component/Post.jsx";
+import NavBar from "./component/Navbar.jsx";
+import Profile from "./component/profile/index.jsx";
 
 export default function AppLayout() {
   return (
@@ -18,6 +20,8 @@ export default function AppLayout() {
           <Routes>
             <Route path="/" element={<ChatAppLanding />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/home" element={<NavBar />} />
+            <Route path="profile" element={<Profile />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/friend-suggestion" element={<FriendSuggestions />} />

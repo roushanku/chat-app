@@ -86,4 +86,23 @@ async function getuserDetails(userId) {
     }
 }
 
-export { login , logout , getuserDetails , register};
+async function updateProfilePicture(file) {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axios.post(`${backendUrl}/api/v1/auth/updateProfilePicture`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Failed to update profile picture:", error);
+        toast.error(error.response?.data?.message || "Failed to update profile picture.");
+    }
+}
+
+export { login , logout , getuserDetails , register , updateProfilePicture};

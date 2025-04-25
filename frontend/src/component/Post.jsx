@@ -6,6 +6,7 @@ import {
   MessageCircle, 
   Send 
 } from 'lucide-react';
+import NavBar from './Navbar';
 
 const ReactionIcon = ({ Icon, isActive, onClick }) => (
   <button 
@@ -83,6 +84,7 @@ const PostCard = ({ post }) => {
   };
 
   return (
+    
     <div className="max-w-md w-full bg-white rounded-lg shadow-md p-4 mb-4">
       {/* User Header */}
       <div 
