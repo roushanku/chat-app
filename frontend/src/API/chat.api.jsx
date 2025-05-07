@@ -57,7 +57,8 @@ async function sendMessage(chatId , sender_id , content , type) {
         },{
             withCredentials: true,
         })
-
+        
+        console.log("response from sendMessage" , response.data);
         return response;
     }
     catch(error) {

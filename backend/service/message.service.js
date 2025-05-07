@@ -32,6 +32,8 @@ async function SaveMessageService(chat_id, sender_id, content, type) {
             // Also emit to the chat room
             io.to(chat_id).emit('getnewMessage', savedMessage);
         }
+
+        console.log("Message saved successfully:", savedMessage);
         
         return savedMessage;
     }
