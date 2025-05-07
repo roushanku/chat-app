@@ -13,6 +13,19 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Content is required']
     },
+    type : {
+        type: String,
+        enum: ['text', 'image', 'video' , 'audio'],
+        default: 'text'
+    },
+    text_content : {
+        type: String,
+        default: null
+    },
+    duration : {
+        type: Number,
+        default: null
+    },
     read_by : [
         {
             type: mongoose.Schema.Types.ObjectId,
